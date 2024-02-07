@@ -96,10 +96,10 @@ const searchBeerByName = async (searchTerm) => {
     console.log(searchBeer[0])
     return searchBeer
 }
-
+/*
 const displaySearchResults = (results) => {
     const searchResultsDiv = document.getElementById("searchResults");
-    let html = "<ul>";
+    let html = "<ul class='search-result'>";
     results.slice(0, 10).forEach((beer) => {
       html += `<li><a href="#" class="beer-link" data-id="${beer.id}">${beer.name}</a></li>`;
     });
@@ -117,6 +117,77 @@ const displaySearchResults = (results) => {
       });
     });
 }
+*/
+
+const displaySearchResults = (results) => {
+  const searchResultsDiv = document.getElementById("searchResults");
+  const totalResults = results.length;
+  const itemsPerPage = 10;
+  let currentPage = 1;
+
+  const renderResults = () => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const slicedResults = results.slice(start, end);
+
+    let html = "<ul>";
+    slicedResults.forEach((beer) => {
+      html += `<li><a href="#" class="beer-link" data-id="${beer.id}">${beer.name}</a></li>`;
+    });
+    html += "</ul>";
+
+    // Add pagination controls
+    const paginationHTML = `
+      <div class="pagination">
+        <button class="prev-btn" ${
+          currentPage === 1 ? "disabled" : ""
+        }>Prev</button>
+        <span class="page-info">${start + 1}-${Math.min(
+      end,
+      totalResults
+    )} / ${totalResults}</span>
+        <button class="next-btn" ${
+          end >= totalResults ? "disabled" : ""
+        }>Next</button>
+      </div>
+    `;
+
+    searchResultsDiv.innerHTML = html + paginationHTML;
+
+    const beerLinks = document.querySelectorAll(".beer-link");
+    beerLinks.forEach((link) => {
+      link.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const beerId = event.target.dataset.id;
+        const beer = await getBeerById(beerId);
+        console.log(beer[0]);
+        displayBeerDetailsPage(beer);
+      });
+    });
+
+    // Add event listeners for pagination buttons
+    const prevBtn = document.querySelector(".prev-btn");
+    const nextBtn = document.querySelector(".next-btn");
+
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderResults();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (end < totalResults) {
+        currentPage++;
+        renderResults();
+      }
+    });
+  };
+
+  renderResults();
+};
+
+
 
 async function getBeerById(id) {
     console.log("ID " + id)

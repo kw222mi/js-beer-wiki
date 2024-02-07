@@ -112,3 +112,25 @@ input[type=text] {
 input[type=text]:focus {
     width: 50%;
 }
+
+.search-result {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+p {
+    margin-top: 5px;
+}
+
+a {
+    color: var(--color-liver);
+        text-decoration: none;
+}
+
+a:visited {
+    color: var(--color-gray)
+}
+
+a:hover {
+    cursor: pointer;
+    color: black;
+}
