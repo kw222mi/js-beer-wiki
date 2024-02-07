@@ -25,8 +25,8 @@ const renderRandomBeer = (randomBeer) => {
     // Render new beer
     const beerHTML = `
     <div class="beer-card">
-    <img src=${randomBeer[0].image_url} alt="picture of random beer" class="random-beer-img">
-    <div>${randomBeer[0].name}</div>
+    <img src=${randomBeer[0].image_url} alt=${randomBeer[0].name} class="beer-img">
+    <div class="random-beer-name">${randomBeer[0].name}</div>
     <button id="seeMoreBtn">See more</button>
      </div>
     `;
@@ -39,46 +39,56 @@ const renderRandomBeer = (randomBeer) => {
 }
 
 function displayBeerDetailsPage(beer) {
-    clearOldContent();
-    console.log()
-    beer = beer[0]
+  clearOldContent();
+  beer = beer[0];
+
+  const hopsList = beer.ingredients.hops
+    .map((hop) => `<span>${hop.name}  </span>`)
+    .join("");
+
   const beerDetailsHTML = `
     <div class="beer-details">
       <h2>${beer.name}</h2>
-      <img src="${beer.image_url}" alt="${beer.name}">
-      <p>Description: ${beer.description}</p>
-      <p> Alcohol by volume/ABV: ${beer.abv}</p>
-      <p>Volume: ${beer.volume.value} ${beer.volume.unit}</p>
-      <p>Ingredients: ${JSON.stringify(beer.ingredients)}</p>
-      <p>Hops: ${JSON.stringify(beer.ingredients.hops)}</p>
-      <p>Food Pairing: ${beer.food_pairing.join(", ")}</p>
-      <p>Brewers Tips: ${beer.brewers_tips}</p>
+      <img src="${beer.image_url}" alt="${beer.name}" class="beer-img">
+      <p><span class="bold" >Description: </span>${beer.description}</p>
+      <p><span class="bold">Alcohol by volume/ABV: </span>${beer.abv}</p>
+      <p><span class="bold">Volume: </span>${beer.volume.value} ${
+    beer.volume.unit}</p>
+      <p><span class="bold">Ingredients: </span>${Object.keys(
+        beer.ingredients)}</p>
+      <p><span class="bold">Hops: </span>${hopsList}</p>
+      <p><span class="bold">Food Pairing: </span>${beer.food_pairing.join(
+        ", ")}</p>
+      <p><span class="bold">Brewers Tips: </span>${beer.brewers_tips}</p>
     </div>
   `;
   content.innerHTML = beerDetailsHTML;
 }
 
+
 const getSearch = () => {
-   clearOldContent()
-    // Render new content
-    const searchFormHTML = `
+  clearOldContent();
+
+  // Render new content
+  const searchFormHTML = `
     <form id="searchForm">
       <input type="text" id="searchInput" placeholder="Search beer...">
       <button type="submit">Search</button>
     </form>
     <div id="searchResults"></div>
   `;
-    contentDiv.innerHTML = searchFormHTML;
+  contentDiv.innerHTML = searchFormHTML;
 
-     const searchForm = document.getElementById("searchForm");
-     searchForm.addEventListener("submit", async (event) => {
-       event.preventDefault();
-       const searchTerm = document.getElementById("searchInput").value;
-       const searchResults = await searchBeerByName(searchTerm);
-       displaySearchResults(searchResults);
-     });
+  const searchForm = document.getElementById("searchForm");
+  searchForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const searchTerm = document.getElementById("searchInput").value;
+    const modifiedSearchTerm = searchTerm.replace(/\s+/g, "_"); // Replace spaces with underscore
+    const searchResults = await searchBeerByName(modifiedSearchTerm);
+    displaySearchResults(searchResults);
+  });
+};
 
-}
 
 const searchBeerByName = async (searchTerm) => {
  const response = await fetch(`https://api.punkapi.com/v2/beers?beer_name=${searchTerm}`);
@@ -123,4 +133,3 @@ const clearOldContent = () => {
 }
 
 
-//search for more then one word
