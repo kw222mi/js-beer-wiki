@@ -24,9 +24,11 @@ const renderRandomBeer = (randomBeer) => {
    clearOldContent();
     // Render new beer
     const beerHTML = `
+    <div class="beer-card">
     <img src=${randomBeer[0].image_url} alt="picture of random beer" class="random-beer-img">
     <div>${randomBeer[0].name}</div>
     <button id="seeMoreBtn">See more</button>
+     </div>
     `;
     contentDiv.innerHTML = beerHTML
 
@@ -104,7 +106,6 @@ const displaySearchResults = (results) => {
         displayBeerDetailsPage(beer);
       });
     });
-
 }
 
 async function getBeerById(id) {
@@ -120,3 +121,6 @@ const clearOldContent = () => {
       contentDiv.removeChild(contentDiv.firstChild);
     }
 }
+
+
+//search for more then one word
