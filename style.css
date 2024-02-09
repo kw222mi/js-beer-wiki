@@ -21,7 +21,7 @@ body {
     width: 700px;
     margin: auto;
     padding: 10px;
-    height:100vh;
+    min-height:100vh;
 }
 
 h1 {
@@ -39,6 +39,7 @@ li {
     font-weight: 600;
     font-family: 'Space Grotesk', sans-serif;
 }
+
 /*------------- BUTTON ---------------*/
 
 .buttons-ul {
@@ -99,6 +100,19 @@ button:active {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 24px;
 
+}
+
+/*-------------- Beer details ----------*/
+
+h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.beer-details {
+    margin-bottom: 50px;
+    width: 70%;
 }
 
 /*---------- Search --------------*/

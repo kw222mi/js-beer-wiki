@@ -9,7 +9,7 @@ beerButton.addEventListener("click", (e) => getRandomBeer(e));
 // Event listener to search for a beer
 searchForBeerButton.addEventListener("click", () => getSearch());
 // Event listener to get a random beer when loading the page
-window.addEventListener("load", (e) => getRandomBeer(e));
+ window.addEventListener("load", (e) => getRandomBeer(e));
 
 /*----------Functions----------*/
 // Function to fetch a random beer from the API
@@ -98,21 +98,26 @@ const getSearch = () => {
     const modifiedSearchTerm = searchTerm.replace(/\s+/g, "_"); // Replace spaces with underscore
     const searchResults = await searchBeerByName(modifiedSearchTerm);
     displaySearchResults(searchResults);
+
+    
   });
+  
 };
+
+
 
 // Function to search for a beer by its name
 const searchBeerByName = async (searchTerm) => {
-    try {
-  const response = await fetch(
-    `https://api.punkapi.com/v2/beers?beer_name=${searchTerm}`
-  );
-  const searchBeer = await response.json();
-  console.log(searchBeer[0]);
-  return searchBeer;
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    const response = await fetch(
+      `https://api.punkapi.com/v2/beers?beer_name=${searchTerm}`
+    );
+    const searchBeer = await response.json();
+    console.log(searchBeer[0]);
+    return searchBeer;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 // Function to display search results with pagination
@@ -188,15 +193,15 @@ const displaySearchResults = (results) => {
 
 // Function to fetch a beer by its ID
 async function getBeerById(id) {
-    try {
-  console.log("ID " + id);
-  const response = await fetch(`https://api.punkapi.com/v2/beers/${id}`);
-  const data = await response.json();
-  console.log(data);
-  return data;
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    console.log("ID " + id);
+    const response = await fetch(`https://api.punkapi.com/v2/beers/${id}`);
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 // Function to clear old content from the contentDiv
