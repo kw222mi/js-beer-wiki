@@ -9,7 +9,21 @@ beerButton.addEventListener("click", (e) => getRandomBeer(e));
 // Event listener to search for a beer
 searchForBeerButton.addEventListener("click", () => getSearch());
 // Event listener to get a random beer when loading the page
- window.addEventListener("load", (e) => getRandomBeer(e));
+// window.addEventListener("load", (e) => getRandomBeer(e), checkState());
+
+// Event listener for popstate event
+window.addEventListener("popstate", (event) => {
+  event.preventDefault();
+  console.log(history);
+  console.log("EVENT STATE " + event.state.view);
+  if (event.state.view) {
+    // Restore application state based on the popped history state
+    restoreAppState(event.state);
+  } else {
+    // If no state, render default content
+    renderDefaultContent();
+  }
+});
 
 /*----------Functions----------*/
 // Function to fetch a random beer from the API
@@ -17,8 +31,23 @@ const getRandomBeer = async (e) => {
   try {
     const response = await fetch("https://api.punkapi.com/v2/beers/random");
     const randomBeer = await response.json();
-    console.log(randomBeer[0]);
+    // console.log(randomBeer[0]);
     renderRandomBeer(randomBeer);
+
+    // Push the state to history
+    const state = {
+      view: "randomBeer", // Anger vilken vy användaren befinner sig i
+      searchData: {
+        searchTerm: "", // Sparar söktermen
+        searchResults: [], // Sparar sökresultaten
+      },
+      randomBeerData: {
+        randomBeer: randomBeer, // Sparar den slumpmässiga ölen
+      },
+    };
+
+    history.pushState(state, "", "");
+    console.log(history.state);
   } catch (error) {
     console.error(error);
   }
@@ -39,14 +68,14 @@ const renderRandomBeer = (randomBeer) => {
 
   const seeMoreBtn = document.getElementById("seeMoreBtn");
   seeMoreBtn.addEventListener("click", () => {
-    displayBeerDetailsPage(randomBeer);
+    displayBeerDetailsPage(randomBeer[0]);
   });
 };
 
 // Function to display detailed information about a beer
 function displayBeerDetailsPage(beer) {
   clearOldContent();
-  beer = beer[0];
+  //beer = beer[0];
 
   // Create a list of hops
   const hopsList = beer.ingredients.hops
@@ -74,6 +103,18 @@ function displayBeerDetailsPage(beer) {
     </div>
   `;
   content.innerHTML = beerDetailsHTML;
+
+  const state = {
+    view: "beerDetails", // Anger vilken vy användaren befinner sig i
+    searchData: {
+      searchTerm: "", // Sparar söktermen
+      searchResults: [], // Sparar sökresultaten
+    },
+    randomBeerData: {
+      randomBeer: beer, // Sparar den slumpmässiga ölen
+    },
+  };
+  history.pushState(state, "", "");
 }
 
 // Function to handle the search for a beer
@@ -99,12 +140,21 @@ const getSearch = () => {
     const searchResults = await searchBeerByName(modifiedSearchTerm);
     displaySearchResults(searchResults);
 
-    
+    const state = {
+      view: "searchResults", // Anger vilken vy användaren befinner sig i
+      searchData: {
+        searchTerm: modifiedSearchTerm, // Sparar söktermen
+        searchResults: searchResults, // Sparar sökresultaten
+      },
+      randomBeerData: {
+        randomBeer: null, // Sparar den slumpmässiga ölen
+      },
+    };
+
+    history.pushState(state, "");
+    console.log(history);
   });
-  
 };
-
-
 
 // Function to search for a beer by its name
 const searchBeerByName = async (searchTerm) => {
@@ -113,7 +163,7 @@ const searchBeerByName = async (searchTerm) => {
       `https://api.punkapi.com/v2/beers?beer_name=${searchTerm}`
     );
     const searchBeer = await response.json();
-    console.log(searchBeer[0]);
+    // console.log(searchBeer[0]);
     return searchBeer;
   } catch (error) {
     console.error(error);
@@ -164,8 +214,9 @@ const displaySearchResults = (results) => {
         event.preventDefault();
         const beerId = event.target.dataset.id;
         const beer = await getBeerById(beerId);
-        console.log(beer[0]);
-        displayBeerDetailsPage(beer);
+        // console.log(beer[0]);
+
+        displayBeerDetailsPage(beer[0]);
       });
     });
 
@@ -194,10 +245,10 @@ const displaySearchResults = (results) => {
 // Function to fetch a beer by its ID
 async function getBeerById(id) {
   try {
-    console.log("ID " + id);
+    // console.log("ID " + id);
     const response = await fetch(`https://api.punkapi.com/v2/beers/${id}`);
     const data = await response.json();
-    console.log(data);
+
     return data;
   } catch (error) {
     console.error(error);
@@ -209,4 +260,43 @@ const clearOldContent = () => {
   while (contentDiv.hasChildNodes()) {
     contentDiv.removeChild(contentDiv.firstChild);
   }
+};
+
+// Function to restore application state based on history state
+const restoreAppState = (state) => {
+  console.log(location);
+  console.log(history);
+  console.log(state.view);
+  // Restore application state based on the popped history state
+  switch (state.view) {
+    case "randomBeer":
+      console.log("get random");
+      console.log(state.randomBeerData.randomBeer);
+      renderRandomBeer(state.randomBeerData.randomBeer);
+      break;
+    case "beerDetails":
+      console.log("beerDetails");
+      console.log(state.randomBeerData.randomBeer);
+      displayBeerDetailsPage(state.randomBeerData.randomBeer);
+      break;
+    case "searchResults":
+      // Restore search results
+      console.log("search results");
+      console.log(state.searchData.searchResults);
+      getSearch()
+      displaySearchResults(state.searchData.searchResults);
+      break;
+    default:
+      console.log("render default");
+      renderDefaultContent();
+      break;
+  }
+};
+
+// Function to render default content
+const renderDefaultContent = () => {
+  // Render default content
+  // For example, render a random beer as default content
+  console.log("default");
+  getRandomBeer();
 };

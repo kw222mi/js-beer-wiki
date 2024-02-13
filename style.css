@@ -42,14 +42,14 @@ li {
 
 /*------------- BUTTON ---------------*/
 
-.buttons-ul {
+.nav-ul {
     display: flex;
     flex-direction: row;
     margin-bottom: 30px;
     transition: margin-bottom 0.3s ease;
 }
 
-button {
+.nav, button {
     width: 100px;
     background-color: var(--color-blue);
     border: 2px solid black;
@@ -60,13 +60,13 @@ button {
     font-family: 'Space Grotesk', sans-serif;
 
 }
-button:hover {
+.nav:hover, button:hover {
     box-shadow: 0 10px 6px -6px #000;
     cursor: pointer;
 
 }
 
-button:active {
+.nav:active, button:active {
     background-color: var(--color-blue);
     box-shadow: 0 5px gray;
     transform: translateY(2px);
